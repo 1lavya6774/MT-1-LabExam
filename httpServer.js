@@ -1,5 +1,6 @@
 const http = require('http');
 const fs = require('fs');
+const path = require('path');
 
 let vehicles = [];
 
@@ -17,7 +18,7 @@ const server = http.createServer((req, res) => {
         res.end('Application information: Vehicle Management System using core Node.js');
     } 
     else if (req.method === 'GET' && req.url === '/info') {
-        fs.readFile('public/info.html', (err, data) => {
+        fs.readFile(path.join(__dirname, 'public', 'info.html'), (err, data) => {
             if (err) {
                 res.writeHead(500, { 'Content-Type': 'text/plain' });
                 res.end('500 Internal Server Error: Could not read file');
@@ -38,6 +39,16 @@ const server = http.createServer((req, res) => {
                 if (!id || !vehicleName || !vehicleNumber || !type || !price) {
                     res.writeHead(400, { 'Content-Type': 'application/json' });
                     return res.end(JSON.stringify({ error: 'Missing required fields' }));
+                }
+
+                if (typeof price !== 'number' || price <= 0) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({ error: 'Price must be a positive number' }));
+                }
+
+                if (vehicles.some(v => v.id === id)) {
+                    res.writeHead(409, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({ error: 'Vehicle with this id already exists' }));
                 }
 
                 vehicles.push(parsedBody);
