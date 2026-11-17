@@ -22,6 +22,19 @@ app.get('/vehicles/:id', (req, res) => {
     res.status(200).json(vehicle);
 });
 
+// POST: Add a new vehicle
+app.post('/vehicles', (req, res) => {
+    const { id, vehicleName, vehicleNumber, type, price } = req.body;
+    
+    if (!id || !vehicleName || !vehicleNumber || !type || price === undefined || price <= 0) {
+        return res.status(400).json({ error: 'Missing required fields or invalid price' });
+    }
+
+    const newVehicle = { id, vehicleName, vehicleNumber, type, price };
+    vehicles.push(newVehicle);
+    res.status(201).json({ message: "Vehicle added successfully", vehicle: newVehicle });
+});
+
 app.listen(4000, () => {
     console.log('Express Server running at http://localhost:4000');
 });
