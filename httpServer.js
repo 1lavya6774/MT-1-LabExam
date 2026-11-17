@@ -12,10 +12,10 @@ const server = http.createServer((req, res) => {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(vehicles));
     } 
-    // else if (req.method === 'GET' && req.url === '/about') {
-        // res.writeHead(200, { 'Content-Type': 'text/plain' });
-        // res.end('Application information: Vehicle Management System using core Node.js');
-    // } 
+    else if (req.method === 'GET' && req.url === '/about') {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('Application information: Vehicle Management System using core Node.js');
+    } 
     else if (req.method === 'GET' && req.url === '/info') {
         fs.readFile('public/info.html', (err, data) => {
             if (err) {
