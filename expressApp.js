@@ -24,10 +24,15 @@ app.get('/vehicles/:id', (req, res) => {
 
 // POST: Add a new vehicle
 app.post('/vehicles', (req, res) => {
-    const { id, vehicleName, vehicleNumber, type, price } = req.body;
-    
-    if (!id || !vehicleName || !vehicleNumber || !type || price === undefined || price <= 0) {
+    const { vehicleName, vehicleNumber, type, price } = req.body;
+    const id = Number(req.body.id);
+
+    if (!id || !vehicleName || !vehicleNumber || !type || typeof price !== 'number' || price <= 0) {
         return res.status(400).json({ error: 'Missing required fields or invalid price' });
+    }
+
+    if (vehicles.some(v => v.id === id)) {
+        return res.status(409).json({ error: 'Vehicle with this id already exists' });
     }
 
     const newVehicle = { id, vehicleName, vehicleNumber, type, price };
@@ -41,10 +46,14 @@ app.put('/vehicles/:id', (req, res) => {
     if (!vehicle) return res.status(404).json({ error: 'Vehicle not found' });
 
     const { vehicleName, vehicleNumber, type, price } = req.body;
+    if (price !== undefined && (typeof price !== 'number' || price <= 0)) {
+        return res.status(400).json({ error: 'Price must be a positive number' });
+    }
+
     if (vehicleName) vehicle.vehicleName = vehicleName;
     if (vehicleNumber) vehicle.vehicleNumber = vehicleNumber;
     if (type) vehicle.type = type;
-    if (price && price > 0) vehicle.price = price;
+    if (price !== undefined) vehicle.price = price;
 
     res.status(200).json({ message: "Vehicle updated successfully", vehicle });
 });
@@ -56,6 +65,19 @@ app.delete('/vehicles/:id', (req, res) => {
 
     const deletedVehicle = vehicles.splice(index, 1);
     res.status(200).json({ message: "Vehicle deleted successfully", vehicle: deletedVehicle[0] });
+});
+
+// 404 handler for unknown routes
+app.use((req, res) => {
+    res.status(404).json({ error: 'Route not found' });
+});
+
+// Error handler (e.g. malformed JSON body)
+app.use((err, req, res, next) => {
+    if (err.type === 'entity.parse.failed') {
+        return res.status(400).json({ error: 'Invalid JSON format' });
+    }
+    res.status(500).json({ error: 'Internal Server Error' });
 });
 
 app.listen(4000, () => {
