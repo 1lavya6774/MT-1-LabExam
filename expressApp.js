@@ -50,13 +50,13 @@ app.put('/vehicles/:id', (req, res) => {
 });
 
 // DELETE: Delete a vehicle
-app.delete('/vehicles/:id', (req, res) => {
-    const index = vehicles.findIndex(v => v.id === parseInt(req.params.id));
-    if (index === -1) return res.status(404).json({ error: 'Vehicle not found' });
+// app.delete('/vehicles/:id', (req, res) => {
+    // const index = vehicles.findIndex(v => v.id === parseInt(req.params.id));
+    // if (index === -1) return res.status(404).json({ error: 'Vehicle not found' });
 
-    const deletedVehicle = vehicles.splice(index, 1);
-    res.status(200).json({ message: "Vehicle deleted successfully", vehicle: deletedVehicle[0] });
-});
+    // const deletedVehicle = vehicles.splice(index, 1);
+    // res.status(200).json({ message: "Vehicle deleted successfully", vehicle: deletedVehicle[0] });
+// });
 
 app.listen(4000, () => {
     console.log('Express Server running at http://localhost:4000');
