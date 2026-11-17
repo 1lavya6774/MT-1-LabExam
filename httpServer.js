@@ -1,4 +1,5 @@
 const http = require('http');
+const fs = require('fs');
 
 let vehicles = [];
 
@@ -14,6 +15,17 @@ const server = http.createServer((req, res) => {
     else if (req.method === 'GET' && req.url === '/about') {
         res.writeHead(200, { 'Content-Type': 'text/plain' });
         res.end('Application information: Vehicle Management System using core Node.js');
+    } 
+    else if (req.method === 'GET' && req.url === '/info') {
+        fs.readFile('public/info.html', (err, data) => {
+            if (err) {
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('500 Internal Server Error: Could not read file');
+            } else {
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                res.end(data);
+            }
+        });
     } 
     else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
