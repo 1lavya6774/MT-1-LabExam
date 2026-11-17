@@ -35,6 +35,29 @@ app.post('/vehicles', (req, res) => {
     res.status(201).json({ message: "Vehicle added successfully", vehicle: newVehicle });
 });
 
+// PUT: Update vehicle details
+app.put('/vehicles/:id', (req, res) => {
+    const vehicle = vehicles.find(v => v.id === parseInt(req.params.id));
+    if (!vehicle) return res.status(404).json({ error: 'Vehicle not found' });
+
+    const { vehicleName, vehicleNumber, type, price } = req.body;
+    if (vehicleName) vehicle.vehicleName = vehicleName;
+    if (vehicleNumber) vehicle.vehicleNumber = vehicleNumber;
+    if (type) vehicle.type = type;
+    if (price && price > 0) vehicle.price = price;
+
+    res.status(200).json({ message: "Vehicle updated successfully", vehicle });
+});
+
+// DELETE: Delete a vehicle
+app.delete('/vehicles/:id', (req, res) => {
+    const index = vehicles.findIndex(v => v.id === parseInt(req.params.id));
+    if (index === -1) return res.status(404).json({ error: 'Vehicle not found' });
+
+    const deletedVehicle = vehicles.splice(index, 1);
+    res.status(200).json({ message: "Vehicle deleted successfully", vehicle: deletedVehicle[0] });
+});
+
 app.listen(4000, () => {
     console.log('Express Server running at http://localhost:4000');
 });
